@@ -65,9 +65,10 @@ def build_knowledge_base():
 def retrieve(question, vectorstore, bm25):
     meaning_chunks = vectorstore.similarity_search(question, k=5)
     keyword_chunks = bm25.invoke(question)
-    out = []
+    out, seen = [], set()
     for d in meaning_chunks + keyword_chunks:
-        if d not in out:
+        if d.page_content not in seen:
+            seen.add(d.page_content)
             out.append(d)
     return out
 
